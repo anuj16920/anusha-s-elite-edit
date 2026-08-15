@@ -92,7 +92,7 @@ function ProductPage() {
                 animate={{ opacity: 1, scale: zoom ? 1.9 : 1 }}
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-                style={zoom ? { transformOrigin: `${zoom.x}% ${zoom.y}%` } : undefined}
+                style={{ transformOrigin: zoom ? `${zoom.x}% ${zoom.y}%` : "center" }}
                 className="h-full w-full object-cover"
               />
             </AnimatePresence>

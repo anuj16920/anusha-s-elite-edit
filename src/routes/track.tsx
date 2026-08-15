@@ -33,7 +33,10 @@ function Track() {
         onSubmit={(e) => {
           e.preventDefault();
           const found = orders.find((o) => o.id.toLowerCase() === id.trim().toLowerCase().replace("#", ""));
-          if (!found) return toast.error("No order found with that number", { description: "Try AE1022." });
+          if (!found) {
+            toast.error("No order found with that number", { description: "Try AE1022." });
+            return;
+          }
           navigate({ to: "/order/$id", params: { id: found.id } });
         }}
       >
