@@ -21,7 +21,7 @@ export const Route = createFileRoute("/account")({
 
 function Account() {
   const { user, orders: allOrders, reviews, signOut } = useStore();
-  const orders = allOrders.filter((o) => !user || o.email === user.email || true);
+  const orders = allOrders;
   const myReviews = reviews.filter((r) => r.customer === user?.name);
 
   if (!user) {
