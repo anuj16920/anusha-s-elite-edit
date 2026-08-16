@@ -18,7 +18,7 @@ export const Route = createFileRoute("/wishlist")({
 });
 
 function Wishlist() {
-  const { wishlist } = useStore();
+  const { wishlist, products } = useStore();
   const items = wishlist.map((s) => products.find((p) => p.slug === s)).filter(Boolean);
 
   return (

@@ -26,7 +26,7 @@ function Home() {
   const { scrollYProgress } = useScroll({ target: heroRef, offset: ["start start", "end start"] });
   const heroY = useTransform(scrollYProgress, [0, 1], ["0%", reduced ? "0%" : "12%"]);
   const heroFade = useTransform(scrollYProgress, [0, 1], [1, 0.35]);
-  const { recent } = useStore();
+  const { recent, products } = useStore();
 
   const newArrivals = products.filter((p) => p.collection === "New Arrivals" || p.badge === "New").slice(0, 4);
   const bestSellers = products.filter((p) => p.badge === "Bestseller" || p.rating >= 4.8).slice(0, 4);

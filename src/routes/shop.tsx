@@ -8,6 +8,7 @@ import { ProductCard } from "@/components/site/ProductCard";
 import { Counter, GoldDivider, Reveal } from "@/components/motion-kit";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
+import { useStore } from "@/lib/store";
 
 const searchSchema = z.object({
   category: z.string().optional(),
@@ -40,6 +41,7 @@ function Shop() {
   const search = Route.useSearch();
   const navigate = useNavigate({ from: "/shop" });
   const [filtersOpen, setFiltersOpen] = useState(false);
+  const { products: allProducts } = useStore();
 
   const products = useMemo(() => {
     let list = [...allProducts];
@@ -53,7 +55,7 @@ function Shop() {
       default: list.sort((a, b) => +new Date(b.createdAt) - +new Date(a.createdAt));
     }
     return list;
-  }, [search]);
+  }, [search, allProducts]);
 
   const setParam = (patch: Record<string, unknown>) =>
     navigate({ search: (prev) => ({ ...prev, ...patch }) as never });

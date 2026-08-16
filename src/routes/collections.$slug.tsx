@@ -1,5 +1,6 @@
 import { createFileRoute, notFound } from "@tanstack/react-router";
 import { COLLECTIONS } from "@/data/catalog";
+import { useStore } from "@/lib/store";
 import { GoldDivider, Reveal } from "@/components/motion-kit";
 import { ProductCard } from "@/components/site/ProductCard";
 
@@ -26,6 +27,7 @@ export const Route = createFileRoute("/collections/$slug")({
 
 function CollectionPage() {
   const { collection } = Route.useLoaderData();
+  const { products: allProducts } = useStore();
   const products = allProducts.filter((p) => p.collection === collection.name);
 
   return (
