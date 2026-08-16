@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { motion } from "motion/react";
 import { Area, AreaChart, Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { CATEGORY_SALES, ORDERS, PRODUCTS, REVENUE_SERIES } from "@/data/catalog";
+import { useStore } from "@/lib/store";
 import { compactInr, inr, dateFmt } from "@/lib/format";
 import { Counter, Reveal } from "@/components/motion-kit";
 
