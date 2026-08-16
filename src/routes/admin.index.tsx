@@ -19,14 +19,17 @@ export const Route = createFileRoute("/admin/")({
 });
 
 function Dashboard() {
-  const revenue = REVENUE_SERIES.reduce((s, r) => s + r.revenue, 0);
-  const lowStock = PRODUCTS.filter((p) => p.stock < 6);
+  const { orders, products, reviews, messages } = useStore();
+  const liveRevenue = orders.reduce((s, o) => s + (o.payment === "Refunded" ? 0 : o.total), 0);
+  const revenue = REVENUE_SERIES.reduce((s, r) => s + r.revenue, 0) + liveRevenue;
+  const lowStock = products.filter((p) => p.stock < 6);
+  void reviews; void messages;
 
   const kpis = [
     { label: "Revenue (7 mo)", value: revenue, prefix: "₹" },
-    { label: "Orders", value: REVENUE_SERIES.reduce((s, r) => s + r.orders, 0) },
-    { label: "Customers", value: 82 },
-    { label: "Products live", value: PRODUCTS.length },
+    { label: "Orders", value: REVENUE_SERIES.reduce((s, r) => s + r.orders, 0) + orders.length },
+    { label: "Customers", value: new Set(orders.map((o) => o.email)).size + 76 },
+    { label: "Products live", value: products.length },
   ];
 
   return (
