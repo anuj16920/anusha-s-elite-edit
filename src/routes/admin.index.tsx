@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { motion } from "motion/react";
 import { Area, AreaChart, Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
-import { CATEGORY_SALES, ORDERS, PRODUCTS, REVENUE_SERIES } from "@/data/catalog";
+import { CATEGORY_SALES, REVENUE_SERIES } from "@/data/catalog";
 import { useStore } from "@/lib/store";
 import { compactInr, inr, dateFmt } from "@/lib/format";
 import { Counter, Reveal } from "@/components/motion-kit";
@@ -105,7 +105,7 @@ function Dashboard() {
                 </tr>
               </thead>
               <tbody>
-                {ORDERS.map((o, i) => (
+                {orders.slice(0, 6).map((o, i) => (
                   <motion.tr key={o.id} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: i * 0.05 }} className="border-b border-border/60 transition-colors hover:bg-secondary/60">
                     <td className="py-3">#{o.id}</td>
                     <td>{o.customer}</td>
