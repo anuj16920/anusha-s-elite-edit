@@ -36,6 +36,7 @@ function ProductPage() {
   const { product: loaded } = Route.useLoaderData();
   const { addToCart, toggleWishlist, wishlist, markViewed, products, reviews: allReviews, addReview, user } = useStore();
   const [rForm, setRForm] = useState({ rating: 5, text: "" });
+  const product = products.find((p) => p.slug === loaded.slug) ?? loaded;
   const [active, setActive] = useState(0);
   const [qty, setQty] = useState(1);
   const [zoom, setZoom] = useState<{ x: number; y: number } | null>(null);
@@ -47,7 +48,6 @@ function ProductPage() {
     setActive(0);
   }, [product.slug, markViewed]);
 
-  const product = products.find((p) => p.slug === loaded.slug) ?? loaded;
   const related = products.filter((p) => p.category === product.category && p.slug !== product.slug).slice(0, 4);
   const reviews = allReviews.filter((r) => r.product === product.name && r.status === "Published");
 

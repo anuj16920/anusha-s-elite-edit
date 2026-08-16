@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Heart } from "lucide-react";
-import { PRODUCTS } from "@/data/catalog";
+
 import { useStore } from "@/lib/store";
 import { GoldDivider, Reveal } from "@/components/motion-kit";
 import { ProductCard } from "@/components/site/ProductCard";
@@ -19,7 +19,7 @@ export const Route = createFileRoute("/wishlist")({
 
 function Wishlist() {
   const { wishlist } = useStore();
-  const items = wishlist.map((s) => PRODUCTS.find((p) => p.slug === s)).filter(Boolean);
+  const items = wishlist.map((s) => products.find((p) => p.slug === s)).filter(Boolean);
 
   return (
     <div className="mx-auto max-w-[1400px] px-5 py-14 sm:px-8">
