@@ -3,7 +3,7 @@ import { AnimatePresence, motion } from "motion/react";
 import { Heart, Minus, Plus, Star, Truck, RefreshCcw, ShieldCheck, Check } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { PRODUCTS, REVIEWS, findProduct } from "@/data/catalog";
+import { findProduct } from "@/data/catalog";
 import { inr, dateFmt } from "@/lib/format";
 import { useStore } from "@/lib/store";
 import { cn } from "@/lib/utils";
@@ -33,8 +33,10 @@ export const Route = createFileRoute("/product/$slug")({
 });
 
 function ProductPage() {
-  const { product } = Route.useLoaderData();
-  const { addToCart, toggleWishlist, wishlist, markViewed } = useStore();
+  const { product: loaded } = Route.useLoaderData();
+  const { addToCart, toggleWishlist, wishlist, markViewed, products, reviews: allReviews, addReview, user } = useStore();
+  const [rForm, setRForm] = useState({ rating: 5, text: "" });
+  const product = products.find((p) => p.slug === loaded.slug) ?? loaded;
   const [active, setActive] = useState(0);
   const [qty, setQty] = useState(1);
   const [zoom, setZoom] = useState<{ x: number; y: number } | null>(null);
@@ -46,8 +48,8 @@ function ProductPage() {
     setActive(0);
   }, [product.slug, markViewed]);
 
-  const related = PRODUCTS.filter((p) => p.category === product.category && p.slug !== product.slug).slice(0, 4);
-  const reviews = REVIEWS.filter((r) => r.product === product.name);
+  const related = products.filter((p) => p.category === product.category && p.slug !== product.slug).slice(0, 4);
+  const reviews = allReviews.filter((r) => r.product === product.name && r.status === "Published");
 
   return (
     <div className="mx-auto max-w-[1400px] px-5 py-10 sm:px-8">
@@ -223,7 +225,7 @@ function ProductPage() {
           <GoldDivider className="mt-4" />
         </Reveal>
         <div className="mx-auto mt-10 grid max-w-4xl gap-4 sm:grid-cols-2">
-          {(reviews.length ? reviews : REVIEWS.slice(0, 2)).map((r) => (
+          {reviews.map((r) => (
             <Reveal key={r.customer + r.date}>
               <div className="h-full border border-border bg-card p-6">
                 <div className="flex gap-0.5 text-gold">
@@ -234,7 +236,30 @@ function ProductPage() {
               </div>
             </Reveal>
           ))}
+          {!reviews.length && <p className="sm:col-span-2 text-center text-sm text-muted-foreground">No reviews yet — be the first to write one.</p>}
         </div>
+
+        <form
+          className="mx-auto mt-10 max-w-2xl border border-border bg-card p-6"
+          onSubmit={(e) => {
+            e.preventDefault();
+            if (!rForm.text.trim()) { toast.error("Write a few words first."); return; }
+            addReview({ product: product.name, customer: user?.name ?? "Guest", rating: rForm.rating, text: rForm.text });
+            toast.success("Thank you", { description: "Your review is awaiting moderation." });
+            setRForm({ rating: 5, text: "" });
+          }}
+        >
+          <p className="eyebrow">Write a review</p>
+          <div className="mt-3 flex gap-1">
+            {[1, 2, 3, 4, 5].map((n) => (
+              <button type="button" key={n} onClick={() => setRForm({ ...rForm, rating: n })} aria-label={`${n} star`}>
+                <Star className={cn("h-5 w-5", n <= rForm.rating ? "fill-gold text-gold" : "text-muted-foreground")} />
+              </button>
+            ))}
+          </div>
+          <textarea rows={3} value={rForm.text} onChange={(e) => setRForm({ ...rForm, text: e.target.value })} placeholder="How did it drape?" className="mt-4 w-full border border-border bg-background px-4 py-3 text-sm outline-none focus:border-gold" />
+          <button className="btn-shine mt-4 bg-charcoal px-6 py-3 text-[11px] tracking-[0.2em] text-ivory">SUBMIT REVIEW</button>
+        </form>
       </section>
 
       {/* Related */}

@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { motion, useScroll, useTransform, useReducedMotion } from "motion/react";
 import { ArrowRight, Truck, ShieldCheck, Sparkles, RefreshCcw, Star } from "lucide-react";
 import { useRef } from "react";
-import { CATEGORIES, COLLECTIONS, IMAGES, PRODUCTS, TESTIMONIALS } from "@/data/catalog";
+import { CATEGORIES, COLLECTIONS, IMAGES, TESTIMONIALS } from "@/data/catalog";
 import { Counter, GoldDivider, Magnetic, Reveal, RevealImage, Stagger, StaggerItem } from "@/components/motion-kit";
 import { ProductCard } from "@/components/site/ProductCard";
 import { useStore } from "@/lib/store";
@@ -26,11 +26,11 @@ function Home() {
   const { scrollYProgress } = useScroll({ target: heroRef, offset: ["start start", "end start"] });
   const heroY = useTransform(scrollYProgress, [0, 1], ["0%", reduced ? "0%" : "12%"]);
   const heroFade = useTransform(scrollYProgress, [0, 1], [1, 0.35]);
-  const { recent } = useStore();
+  const { recent, products } = useStore();
 
-  const newArrivals = PRODUCTS.filter((p) => p.collection === "New Arrivals" || p.badge === "New").slice(0, 4);
-  const bestSellers = PRODUCTS.filter((p) => p.badge === "Bestseller" || p.rating >= 4.8).slice(0, 4);
-  const recentProducts = recent.map((s) => PRODUCTS.find((p) => p.slug === s)).filter(Boolean).slice(0, 6);
+  const newArrivals = products.filter((p) => p.collection === "New Arrivals" || p.badge === "New").slice(0, 4);
+  const bestSellers = products.filter((p) => p.badge === "Bestseller" || p.rating >= 4.8).slice(0, 4);
+  const recentProducts = recent.map((s) => products.find((p) => p.slug === s)).filter(Boolean).slice(0, 6);
 
   return (
     <div>

@@ -1,7 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { motion } from "motion/react";
 import { Area, AreaChart, Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
-import { CATEGORY_SALES, ORDERS, PRODUCTS, REVENUE_SERIES } from "@/data/catalog";
+import { CATEGORY_SALES, REVENUE_SERIES } from "@/data/catalog";
+import { useStore } from "@/lib/store";
 import { compactInr, inr, dateFmt } from "@/lib/format";
 import { Counter, Reveal } from "@/components/motion-kit";
 
@@ -19,14 +20,17 @@ export const Route = createFileRoute("/admin/")({
 });
 
 function Dashboard() {
-  const revenue = REVENUE_SERIES.reduce((s, r) => s + r.revenue, 0);
-  const lowStock = PRODUCTS.filter((p) => p.stock < 6);
+  const { orders, products, reviews, messages } = useStore();
+  const liveRevenue = orders.reduce((s, o) => s + (o.payment === "Refunded" ? 0 : o.total), 0);
+  const revenue = REVENUE_SERIES.reduce((s, r) => s + r.revenue, 0) + liveRevenue;
+  const lowStock = products.filter((p) => p.stock < 6);
+  void reviews; void messages;
 
   const kpis = [
     { label: "Revenue (7 mo)", value: revenue, prefix: "₹" },
-    { label: "Orders", value: REVENUE_SERIES.reduce((s, r) => s + r.orders, 0) },
-    { label: "Customers", value: 82 },
-    { label: "Products live", value: PRODUCTS.length },
+    { label: "Orders", value: REVENUE_SERIES.reduce((s, r) => s + r.orders, 0) + orders.length },
+    { label: "Customers", value: new Set(orders.map((o) => o.email)).size + 76 },
+    { label: "Products live", value: products.length },
   ];
 
   return (
@@ -101,7 +105,7 @@ function Dashboard() {
                 </tr>
               </thead>
               <tbody>
-                {ORDERS.map((o, i) => (
+                {orders.slice(0, 6).map((o, i) => (
                   <motion.tr key={o.id} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: i * 0.05 }} className="border-b border-border/60 transition-colors hover:bg-secondary/60">
                     <td className="py-3">#{o.id}</td>
                     <td>{o.customer}</td>

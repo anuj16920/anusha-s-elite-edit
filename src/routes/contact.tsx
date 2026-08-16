@@ -1,7 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Mail, Phone, MapPin } from "lucide-react";
+import { useState } from "react";
 import { toast } from "sonner";
 import { GoldDivider, Reveal } from "@/components/motion-kit";
+import { useStore } from "@/lib/store";
 
 export const Route = createFileRoute("/contact")({
   head: () => ({
@@ -16,6 +18,12 @@ export const Route = createFileRoute("/contact")({
 });
 
 function Contact() {
+  const { addMessage, user } = useStore();
+  const [name, setName] = useState(user?.name ?? "");
+  const [email, setEmail] = useState(user?.email ?? "");
+  const [subject, setSubject] = useState("");
+  const [text, setText] = useState("");
+
   return (
     <div className="mx-auto max-w-[1100px] px-5 py-16 sm:px-8">
       <Reveal className="text-center">
@@ -29,22 +37,30 @@ function Contact() {
           className="space-y-5"
           onSubmit={(e) => {
             e.preventDefault();
+            addMessage({ name, email, subject, text });
             toast.success("Message sent", { description: "A stylist will reply within one working day." });
-            (e.currentTarget as HTMLFormElement).reset();
+            setSubject(""); setText("");
           }}
         >
-          {[["Name", "text"], ["Email", "email"]].map(([l, t]) => (
-            <label key={l} className="block">
-              <span className="eyebrow">{l}</span>
-              <input required type={t} className="mt-2 w-full border border-border bg-background px-4 py-3 text-sm outline-none focus:border-gold" />
-            </label>
-          ))}
+          <label className="block">
+            <span className="eyebrow">Name</span>
+            <input required value={name} onChange={(e) => setName(e.target.value)} className="mt-2 w-full border border-border bg-background px-4 py-3 text-sm outline-none focus:border-gold" />
+          </label>
+          <label className="block">
+            <span className="eyebrow">Email</span>
+            <input required type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="mt-2 w-full border border-border bg-background px-4 py-3 text-sm outline-none focus:border-gold" />
+          </label>
+          <label className="block">
+            <span className="eyebrow">Subject</span>
+            <input value={subject} onChange={(e) => setSubject(e.target.value)} placeholder="Wedding trousseau, sizing, order help…" className="mt-2 w-full border border-border bg-background px-4 py-3 text-sm outline-none focus:border-gold" />
+          </label>
           <label className="block">
             <span className="eyebrow">Message</span>
-            <textarea required rows={5} className="mt-2 w-full border border-border bg-background px-4 py-3 text-sm outline-none focus:border-gold" />
+            <textarea required rows={5} value={text} onChange={(e) => setText(e.target.value)} className="mt-2 w-full border border-border bg-background px-4 py-3 text-sm outline-none focus:border-gold" />
           </label>
           <button className="btn-shine w-full bg-charcoal py-4 text-[11px] tracking-[0.24em] text-ivory">SEND MESSAGE</button>
         </form>
+
 
         <div className="space-y-8">
           {[

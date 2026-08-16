@@ -2,13 +2,15 @@ import { Link } from "@tanstack/react-router";
 import { AnimatePresence, motion } from "motion/react";
 import { Search, X } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
-import { CATEGORIES, PRODUCTS } from "@/data/catalog";
+import { CATEGORIES } from "@/data/catalog";
 import { inr } from "@/lib/format";
+import { useStore } from "@/lib/store";
 
 const TRENDING = ["Kanjeevaram", "Bridal red", "Organza", "Banarasi", "Under ₹10,000"];
 
 export function SearchOverlay({ open, onClose }: { open: boolean; onClose: () => void }) {
   const [q, setQ] = useState("");
+  const { products } = useStore();
 
   useEffect(() => {
     const esc = (e: KeyboardEvent) => e.key === "Escape" && onClose();
@@ -25,10 +27,10 @@ export function SearchOverlay({ open, onClose }: { open: boolean; onClose: () =>
   const results = useMemo(() => {
     const term = q.trim().toLowerCase();
     if (!term) return [];
-    return PRODUCTS.filter((p) =>
+    return products.filter((p) =>
       [p.name, p.category, p.fabric, p.colour, p.occasion].join(" ").toLowerCase().includes(term),
     ).slice(0, 6);
-  }, [q]);
+  }, [q, products]);
 
   return (
     <AnimatePresence>

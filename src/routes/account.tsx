@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { motion } from "motion/react";
 import { toast } from "sonner";
-import { RETURNS, REVIEWS } from "@/data/catalog";
+import { RETURNS } from "@/data/catalog";
 import { inr, dateFmt } from "@/lib/format";
 import { useStore } from "@/lib/store";
 import { GoldDivider, Reveal } from "@/components/motion-kit";
@@ -20,7 +20,9 @@ export const Route = createFileRoute("/account")({
 });
 
 function Account() {
-  const { user, orders, signOut } = useStore();
+  const { user, orders: allOrders, reviews, signOut } = useStore();
+  const orders = allOrders;
+  const myReviews = reviews.filter((r) => r.customer === user?.name);
 
   if (!user) {
     return (
@@ -77,8 +79,8 @@ function Account() {
         </TabsContent>
 
         <TabsContent value="reviews" className="mt-8 space-y-4">
-          {REVIEWS.slice(0, 3).map((r) => (
-            <div key={r.product} className="border border-border bg-card p-5">
+          {(myReviews.length ? myReviews : reviews.slice(0, 3)).map((r) => (
+            <div key={r.product + r.date} className="border border-border bg-card p-5">
               <p className="text-sm">{r.product}</p>
               <p className="mt-2 text-sm text-muted-foreground">“{r.text}”</p>
               <p className="eyebrow mt-3">{dateFmt(r.date)} · {r.rating}/5</p>
